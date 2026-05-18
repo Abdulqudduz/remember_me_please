@@ -1,0 +1,205 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:4133167228019039184",
+      "lastPropertyId": "7:1350609043957155911",
+      "name": "PersonModel",
+      "properties": [
+        {
+          "id": "1:2379899404649808560",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7089732499169046139",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:4577677751589945815",
+          "name": "relationship",
+          "type": 9
+        },
+        {
+          "id": "4:6422175461290115376",
+          "name": "memoryNote1",
+          "type": 9
+        },
+        {
+          "id": "5:3371979461198918683",
+          "name": "memoryNote2",
+          "type": 9
+        },
+        {
+          "id": "6:1515167593537776430",
+          "name": "profilePicturePath",
+          "type": 9
+        },
+        {
+          "id": "7:1350609043957155911",
+          "name": "faceEmbedding",
+          "indexId": "1:1265011307411470283",
+          "type": 28,
+          "flags": 8
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:9220936827239966498",
+      "lastPropertyId": "14:7333083527430620457",
+      "name": "ConversationModel",
+      "properties": [
+        {
+          "id": "1:7836984248545509874",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1600122605867605837",
+          "name": "personName",
+          "type": 9
+        },
+        {
+          "id": "3:7654594625050717614",
+          "name": "timeLabel",
+          "type": 9
+        },
+        {
+          "id": "4:1263026101506824461",
+          "name": "summary",
+          "type": 9
+        },
+        {
+          "id": "6:5213518469224532524",
+          "name": "tagsString",
+          "type": 9
+        },
+        {
+          "id": "7:3047482913095021330",
+          "name": "createdAt",
+          "type": 6
+        },
+        {
+          "id": "8:8195489501468303020",
+          "name": "shortTitle",
+          "type": 9
+        },
+        {
+          "id": "9:7155416353154629911",
+          "name": "importantDetails",
+          "type": 30
+        },
+        {
+          "id": "10:4517569450265641089",
+          "name": "actionsItems",
+          "type": 30
+        },
+        {
+          "id": "11:842844951519166362",
+          "name": "conversationAudioFilePathUrl",
+          "type": 9
+        },
+        {
+          "id": "12:3416009394415691478",
+          "name": "transcriptJson",
+          "type": 9
+        },
+        {
+          "id": "13:7830432068996039742",
+          "name": "personImagePath",
+          "type": 9
+        },
+        {
+          "id": "14:7333083527430620457",
+          "name": "summaryAudioPath",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:7374516994593523704",
+      "lastPropertyId": "10:2129682459745530589",
+      "name": "ReminderModel",
+      "properties": [
+        {
+          "id": "1:5788253247249445967",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7284991125825728618",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "3:4539243583753912093",
+          "name": "time",
+          "type": 9
+        },
+        {
+          "id": "5:8141626704789919372",
+          "name": "brandColorValue",
+          "type": 6
+        },
+        {
+          "id": "6:7717677378395741084",
+          "name": "containerColorValue",
+          "type": 6
+        },
+        {
+          "id": "7:2201889000744305287",
+          "name": "onContainerColorValue",
+          "type": 6
+        },
+        {
+          "id": "8:5800156563968927041",
+          "name": "isCompleted",
+          "type": 1
+        },
+        {
+          "id": "9:9080069033753147293",
+          "name": "createdAt",
+          "type": 6
+        },
+        {
+          "id": "10:2129682459745530589",
+          "name": "iconIndex",
+          "type": 6
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "4:7374516994593523704",
+  "lastIndexId": "1:1265011307411470283",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [
+    2811470375273016013
+  ],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [
+    7745591463225737960,
+    7724536966867340659,
+    6406522665543757635,
+    5033679203471438001,
+    1698322759983632865,
+    5872555056867167792,
+    9160144774720691495,
+    4686682286535609097,
+    2757937925693061030,
+    8037354277966026354
+  ],
+  "retiredRelationUids": [],
+  "version": 1
+}
