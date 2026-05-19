@@ -1,6 +1,5 @@
 
-```markdown
-# RememberMe 🧠 
+# RememberMePlease 🧠 
 **The 100% Offline Cognitive Companion**
 
 [![Gemma 4 Good Hackathon](https://img.shields.io/badge/Hackathon-Gemma_4_Good-blue)](https://kaggle.com)
@@ -9,7 +8,7 @@
 
 *A privacy-first, fully local AI assistant that securely captures, identifies, and summarizes daily conversations to empower individuals living with Mild Cognitive Impairment (MCI).*
 
-🎥 **[Watch the 3-Minute Demo Video Here](INSERT_YOUTUBE_LINK_HERE)**
+🎥 **[Watch the 3-Minute Demo Video Here]https://m.youtube.com/shorts/SBJAksCpoHU
 
 ---
 
