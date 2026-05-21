@@ -85,10 +85,11 @@ dart run build_runner build --delete-conflicting-outputs
 
 
 4. **Model Setup (CRITICAL):**
-* Navigate to the Download Page.
-* Download the required quantized weights.
-* Download the `gemma-4-E2B-it-litert-lm model`, or Import it if you already have it saved on your device.
-* Once the Gemma weight is loaded, the app will automatically download the remaining 264 additional model files required to function.
+Upon launching the app for the first time, complete the onboarding process, after which you will be automatically navigated to the Download Page
+ * Download the required quantized weights.
+ * Download the `gemma-4-E2B-it-litert-lm model`, or Import it if you already have it saved on your device.
+ * Once the Gemma weight is loaded, the app will automatically download the remaining 264 additional model files required to
+function.
 
 
 5. **Run the app:**
