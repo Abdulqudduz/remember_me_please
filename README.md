@@ -85,9 +85,10 @@ dart run build_runner build --delete-conflicting-outputs
 
 
 4. **Model Setup (CRITICAL):**
-Due to GitHub file size limits, the `kokoro_int8_onnx` models and Gemma 4 weights are not included in the repository.
+* Navigate to the Download Page.
 * Download the required quantized weights.
-* On first app launch, the application documents directory will be initialized. You must ensure the model files are placed in the correct system paths as outlined in the `OfflineTtsConfig`.
+* Download the `gemma-4-E2B-it-litert-lm model`, or Import it if you already have it saved on your device.
+* Once the Gemma weight is loaded, the app will automatically download the remaining 264 additional model files required to function.
 
 
 5. **Run the app:**
