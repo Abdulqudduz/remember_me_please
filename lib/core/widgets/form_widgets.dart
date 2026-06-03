@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import '../theme/app_theme.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label;
@@ -38,7 +38,7 @@ class CustomTextField extends StatelessWidget {
               color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
             ),
             filled: true,
-            suffixIcon: suffixIcon ,
+            suffixIcon: suffixIcon,
             fillColor: AppColors.surfaceContainerLowest,
             contentPadding: const EdgeInsets.all(20),
             border: OutlineInputBorder(
@@ -59,7 +59,9 @@ class CustomTextField extends StatelessWidget {
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.error,
+              ),
             ),
           ),
         ),

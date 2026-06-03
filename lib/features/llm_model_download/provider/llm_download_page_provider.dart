@@ -5,26 +5,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:remember_me_please/core/models/download_models.dart';
+import 'package:remember_me_please/core/services/download_service.dart';
 import 'package:remember_me_please/core/services/huggingface_auth_service.dart';
+import 'package:remember_me_please/core/services/zip_extraction_service.dart';
 import 'package:remember_me_please/features/llm_model_download/page/constants/constants.dart';
-import '../../../core/services/huggingface_download_service.dart';
-import '../../../core/services/zip_extraction_service.dart';
 
 // Track the state of each specific model
 enum ModelState { notStarted, downloading, extracting, success, failed }
 
 class LlmDownloadProvider extends ChangeNotifier {
-  final HuggingFaceDownloadService _downloadService =
-      HuggingFaceDownloadService();
+  final DownloadService _downloadService = DownloadService();
   final HuggingFaceAuthService _authService = HuggingFaceAuthService();
 
-  // --- Gemma State ---
+  //  Gemma State
   String? _gemmaTaskId;
   DownloadProgress? _gemmaProgress;
   ModelState _gemmaState = ModelState.notStarted;
   String _gemmaStatusText = "Ready";
 
-  // --- Additional Models State ---
+  //  Additional Models State
   String? _additionalTaskId;
   DownloadProgress? _additionalProgress;
   ModelState _additionalState = ModelState.notStarted;
@@ -58,7 +57,7 @@ class LlmDownloadProvider extends ChangeNotifier {
     super.dispose();
   }
 
-  // --- 1. Start the Gemma Download ---
+  // Start the Gemma Download
   Future<void> startGemmaDownload() async {
     try {
       final authToken = await _authService.authenticateUser();
@@ -87,7 +86,7 @@ class LlmDownloadProvider extends ChangeNotifier {
     }
   }
 
-  // --- 2. Start the Additional Models Download ---
+  // Start the Additional Models Download
   Future<void> _startAdditionalModelsDownload() async {
     _additionalState = ModelState.downloading;
     _additionalStatusText = 'Starting...';
@@ -112,7 +111,7 @@ class LlmDownloadProvider extends ChangeNotifier {
     }
   }
 
-  // --- Global Monitoring Timer ---
+  //  Global Monitoring Timer
   void _startMonitoring() {
     _monitoringTimer?.cancel();
 
@@ -246,7 +245,7 @@ class LlmDownloadProvider extends ChangeNotifier {
     }
   }
 
-  // --- File Picker Logic ---
+  //  File Picker Logic
   Future<void> importModelFromDevice() async {
     try {
       _isCancelRequested = false;

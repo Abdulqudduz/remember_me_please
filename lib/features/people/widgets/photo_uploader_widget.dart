@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
 
 class PhotoUploaderWidget extends StatelessWidget {
   final VoidCallback onTap;

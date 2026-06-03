@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_theme.dart';
-import '../providers/people_provider.dart';
-import '../../../core/widgets/form_widgets.dart';
-import '../../../core/widgets/app_scaffold.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
+import 'package:remember_me_please/core/widgets/app_scaffold.dart';
+import 'package:remember_me_please/core/widgets/form_widgets.dart';
+import 'package:remember_me_please/features/people/providers/people_provider.dart';
 
 class AddPersonPage extends StatefulWidget {
   int? id;

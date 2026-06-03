@@ -1,5 +1,3 @@
-// core/utils/llm_prompt_builder.dart
-
 class LlmPromptBuilder {
   static String buildEnhancedTranscriptPrompt(
     String rawJsonTranscript,

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
 
 class PersonCard extends StatelessWidget {
   final String name;

@@ -1,4 +1,3 @@
-// core/services/tts_service.dart
 // Singleton service that wraps the Kokoro int8 ONNX model via sherpa_onnx.
 // The model is expected to be pre-downloaded by the user into the application
 // documents directory at: <appDocDir>/kokoro_int8_onnx/
@@ -8,8 +7,8 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:remember_me_please/core/utils/wav_helper.dart';
 import 'package:sherpa_onnx/sherpa_onnx.dart' as sherpa_onnx;
-import '../utils/wav_helper.dart';
 
 /// Singleton service for offline text-to-speech using the Kokoro int8 model.
 ///
@@ -36,7 +35,8 @@ class TtsService {
   bool _isInitialized = false;
 
   /// Expose the player state stream so UI can react
-  Stream<PlayerState> get playerStateStream => _audioPlayer.onPlayerStateChanged;
+  Stream<PlayerState> get playerStateStream =>
+      _audioPlayer.onPlayerStateChanged;
 
   /// Expose current playing state
   bool get isPlaying => _audioPlayer.state == PlayerState.playing;
@@ -65,7 +65,18 @@ class TtsService {
     }
 
     final appDir = await getApplicationDocumentsDirectory();
-    final kokoroPath = '${appDir.path}/kokoro_int8_onnx';
+    // print('App directory: ${appDir.path}');
+    // print('----- Contents -----');
+
+    // final items = appDir.listSync(recursive: true);
+
+    // for (final item in items.where(
+    //   (item) => item is Directory || item.path.toLowerCase().contains('koroko'),
+    // )) {
+    //   print(item.path);
+    // }
+
+    final kokoroPath = '${appDir.path}/models/kokoro_int8_onnx';
 
     debugPrint('TtsService: Loading Kokoro model from $kokoroPath');
 
@@ -142,21 +153,26 @@ class TtsService {
   /// Generates speech audio for [text] and saves it as a WAV file.
   Future<String?> generateAndSaveSummaryAudio(String text) async {
     if (!_isInitialized || _tts == null) {
-      debugPrint('TtsService: generateAndSaveSummaryAudio called but engine is not initialized.');
+      debugPrint(
+        'TtsService: generateAndSaveSummaryAudio called but engine is not initialized.',
+      );
       return null;
     }
 
     if (text.trim().isEmpty) return null;
 
     try {
-      debugPrint('TtsService: Generating audio for text (${text.length} chars)');
+      debugPrint(
+        'TtsService: Generating audio for text (${text.length} chars)',
+      );
       final result = _tts!.generate(text: text.trim());
-      
+
       // The ONNX model returns raw PCM float samples. We must convert these into a standard
       // WAV format by adding the appropriate headers so the audio player can decode the stream.
       final wavBytes = WavHelper.pcmToWav(result.samples, result.sampleRate);
       final tempDir = await getTemporaryDirectory();
-      final fileName = 'summary_audio_${DateTime.now().millisecondsSinceEpoch}.wav';
+      final fileName =
+          'summary_audio_${DateTime.now().millisecondsSinceEpoch}.wav';
       final outputFile = File('${tempDir.path}/$fileName');
       await outputFile.writeAsBytes(wavBytes);
       debugPrint('TtsService: Audio saved to ${outputFile.path}');

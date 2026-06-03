@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:remember_me_please/core/widgets/app_scaffold.dart';
+import 'package:remember_me_please/features/navigation/pages/main_navigation_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'onboarding_page.dart';
-import '../../navigation/pages/main_navigation_page.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/app_scaffold.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});

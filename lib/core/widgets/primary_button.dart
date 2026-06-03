@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String label;

@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-// core/services/active_person_tracker.dart
 
 class ActivePersonTracker {
   static final ActivePersonTracker _instance = ActivePersonTracker._internal();

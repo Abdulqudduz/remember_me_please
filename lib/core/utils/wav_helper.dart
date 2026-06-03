@@ -1,4 +1,3 @@
-// core/utils/wav_helper.dart
 // Utility for converting raw PCM float samples into a WAV byte buffer.
 // Adapted directly from the sample/ reference folder.
 import 'dart:typed_data';
@@ -40,7 +39,9 @@ class WavHelper {
     writeInt16(1); // Audio format: 1 = PCM (uncompressed)
     writeInt16(1); // Number of channels: 1 = mono
     writeInt32(sampleRate); // Sample rate in Hz
-    writeInt32(sampleRate * 2); // Byte rate = sampleRate * numChannels * bitsPerSample/8
+    writeInt32(
+      sampleRate * 2,
+    ); // Byte rate = sampleRate * numChannels * bitsPerSample/8
     writeInt16(2); // Block align = numChannels * bitsPerSample/8
     writeInt16(16); // Bits per sample
 

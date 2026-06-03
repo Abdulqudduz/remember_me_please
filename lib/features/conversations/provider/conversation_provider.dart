@@ -9,7 +9,7 @@ import 'package:remember_me_please/core/services/active_person_tracker.dart';
 import 'package:sherpa_onnx/sherpa_onnx.dart' as sherpa_onnx;
 import 'package:remember_me_please/core/services/llm_service.dart';
 import 'package:remember_me_please/core/services/tts_service.dart';
-import 'package:remember_me_please/core/services/WhisperService.dart';
+import 'package:remember_me_please/core/services/whisper_service.dart';
 import 'package:remember_me_please/core/services/diarization_service.dart';
 import 'package:remember_me_please/core/utils/file_helper.dart';
 import 'package:remember_me_please/core/theme/app_theme.dart';

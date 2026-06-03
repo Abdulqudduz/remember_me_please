@@ -12,9 +12,9 @@ class LlmService {
   factory LlmService() => _instance;
   LlmService._internal();
 
-  final _gemma = FlutterGemmaPlugin.instance;
   InferenceModel? _model;
-  InferenceChat? _chat;
+  dynamic
+  _session; // Use dynamic to support different Gemma API versions (InferenceChat / InferenceSession)
 
   bool _isModelLoaded = false;
   bool _isGenerating = false;
@@ -24,8 +24,6 @@ class LlmService {
 
     try {
       final appDir = await getApplicationDocumentsDirectory();
-
-      // Make sure this name exactly matches what your downloader saves!
       final modelPath = '${appDir.path}/$modelName';
       final modelFile = File(modelPath);
 
@@ -33,34 +31,33 @@ class LlmService {
         throw Exception("Gemma model not found at $modelPath");
       }
 
-      // Point plugin to the model path (v0.13.2 syntax)
-      // ignore: deprecated_member_use
-      await _gemma.modelManager.setModelPath(modelPath);
+      // Link the local file to the engine using the static installation pipeline
+      await FlutterGemma.installModel(
+        modelType: ModelType.gemmaIt,
+      ).fromFile(modelPath).install();
 
-      // Create model instance
-      _model ??= await _gemma
-          .createModel(
+      // Safely initialize and fetch the globally linked active model template
+      _model ??=
+          await FlutterGemma.getActiveModel(
+            maxTokens: 4096, // Safe context window size
             preferredBackend: PreferredBackend
                 .cpu, // CPU is safer for avoiding memory crashes
-            modelType: ModelType.gemmaIt,
-            maxTokens: 4096, // Safe context window size
-          )
-          .timeout(
+          ).timeout(
             const Duration(seconds: 45),
             onTimeout: () => throw Exception('Model loading timed out.'),
           );
 
-      // Create persistent chat session
-      _chat ??= await _model!.createChat(
+      // Create persistent session interface directly out of the active model wrapper
+      _session ??= await _model!.createSession(
         temperature: 0.7, // Good balance for data extraction
       );
 
       _isModelLoaded = true;
-      debugPrint("🧠 Gemma Brain successfully booted up! (v0.13.2)");
+      debugPrint("🧠 Gemma Brain successfully booted up!");
     } catch (e) {
       _isModelLoaded = false;
       _model = null;
-      _chat = null;
+      _session = null;
       throw Exception("Failed to initialize Gemma: $e");
     }
   }
@@ -85,13 +82,13 @@ class LlmService {
     String detectedFaceName,
   ) async {
     if (!_isModelLoaded) await initializeModel();
-    if (_isGenerating || _chat == null) return null;
+    if (_isGenerating || _session == null) return null;
 
     _isGenerating = true;
 
     try {
       // Clear history so past transcripts don't confuse the current one
-      await _chat!.clearHistory();
+      await _session!.clearHistory();
 
       // Build the strict JSON prompt
       final promptText = LlmPromptBuilder.buildEnhancedTranscriptPrompt(
@@ -99,33 +96,17 @@ class LlmService {
         detectedFaceName,
       );
 
-      // Add the prompt to the chat
-      await _chat!.addQuery(Message.text(text: promptText, isUser: true));
-
-      // Use a Completer to gather the streaming tokens
-      final completer = Completer<String>();
-      final responseBuffer = StringBuffer();
-
-      _chat!.generateChatResponseAsync().listen(
-        (ModelResponse res) {
-          if (res is TextResponse) {
-            responseBuffer.write(res.token);
-          }
-        },
-        onDone: () {
-          // Stream finished, return the full collected string
-          completer.complete(responseBuffer.toString());
-        },
-        onError: (error) {
-          completer.completeError(error);
-        },
+      // Add the prompt to the chat sequence
+      await _session!.addQueryChunk(
+        Message.text(text: promptText, isUser: true),
       );
 
-      // Wait for the stream to completely finish
-      final fullResponse = await completer.future;
+      // NON-STREAMING: Directly await the full string output response
+      final fullResponse = await _session!.getResponse();
 
-      if (fullResponse.isEmpty)
+      if (fullResponse.isEmpty) {
         throw Exception("Gemma returned an empty response.");
+      }
 
       // Clean up the string to ensure it's raw JSON and parse it
       final cleanJsonString = _cleanJsonResponse(fullResponse);
@@ -140,19 +121,14 @@ class LlmService {
 
   /// Clean up memory when app closes
   Future<void> dispose() async {
+    await _session?.close();
     await _model?.close();
     _model = null;
-    _chat = null;
+    _session = null;
     _isModelLoaded = false;
   }
 
   /// Runs the RAG pipeline and streams the assistant's response token by token.
-  ///
-  /// The caller provides a [prompt] (already built by LlmPromptBuilder) and
-  /// receives tokens via the [onToken] callback as they are generated. The
-  /// [onDone] callback fires when the stream is complete, and [onError] receives
-  /// any exception that occurred. This design lets the UI update progressively
-  /// instead of waiting for the full response.
   Future<void> generateAssistantResponse({
     required String prompt,
     required void Function(String token) onToken,
@@ -170,7 +146,7 @@ class LlmService {
     }
 
     // Guard against concurrent generation requests
-    if (_isGenerating || _chat == null) {
+    if (_isGenerating || _session == null) {
       onError(Exception('Model is busy or not ready.'));
       return;
     }
@@ -179,28 +155,18 @@ class LlmService {
 
     try {
       // Clear previous chat history so the RAG context is the only input
-      await _chat!.clearHistory();
+      await _session!.clearHistory();
 
       // Add the fully-formed RAG prompt as the user turn
-      await _chat!.addQuery(Message.text(text: prompt, isUser: true));
+      await _session!.addQueryChunk(Message.text(text: prompt, isUser: true));
 
-      // Stream tokens as they are generated by Gemma
-      _chat!.generateChatResponseAsync().listen(
-        (ModelResponse res) {
-          if (res is TextResponse) {
-            onToken(res.token);
-          }
-        },
-        onDone: () {
-          _isGenerating = false;
-          onDone();
-        },
-        onError: (error) {
-          _isGenerating = false;
-          onError(error);
-        },
-        cancelOnError: true,
-      );
+      // STREAMING: Iterate through chunks asynchronously as the model generates them
+      await for (final String chunk in _session!.getResponseAsync()) {
+        onToken(chunk);
+      }
+
+      _isGenerating = false;
+      onDone();
     } catch (e) {
       _isGenerating = false;
       onError(e);

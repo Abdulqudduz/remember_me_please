@@ -3,7 +3,63 @@
 <plist version="1.0">
 <dict>
   <key>NSMicrophoneUsageDescription</key>
-  <string>We need access to your microphone to record audio notes.</string>
+  <string>We need access to your microphone to record audio notes and for speech recognition.</string>
+  <key>NSCameraUsageDescription</key>
+  <string>We need access to your camera to take pictures and detect faces.</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>We need access to your photo library to pick images.</string>
+  <key>NSSpeechRecognitionUsageDescription</key>
+  <string>We need access to speech recognition to convert your voice into text.</string>
+  <key>NSAppleMusicUsageDescription</key>
+  <string>We need access to the music library to pick audio files.</string>
+  <key>UISupportsDocumentBrowser</key>
+  <true/>
+  <key>LSSupportsOpeningDocumentsInPlace</key>
+  <true/>
+  <key>CFBundleDocumentTypes</key>
+  <array>
+      <dict>
+          <key>CFBundleTypeName</key>
+          <string>LiteRT Language Model File</string>
+          <key>LSHandlerRank</key>
+          <string>Owner</string>
+          <key>LSItemContentTypes</key>
+          <array>
+              <string>com.google.litertlm</string>
+          </array>
+      </dict>
+  </array>
+
+  <key>UTExportedTypeDeclarations</key>
+  <array>
+      <dict>
+          <key>UTTypeConformsTo</key>
+          <array>
+              <string>public.data</string>
+              <string>public.content</string>
+          </array>
+          <key>UTTypeDescription</key>
+          <string>LiteRT Language Model File</string>
+          <key>UTTypeIdentifier</key>
+          <string>com.google.litertlm</string>
+          <key>UTTypeTagSpecification</key>
+          <dict>
+              <key>public.filename-extension</key>
+              <array>
+                  <string>litertlm</string>
+              </array>
+          </dict>
+      </dict>
+  </array>
+
+
+  <key>UIBackgroundModes</key>
+  <array>
+      <string>fetch</string>
+      <string>processing</string>
+      <string>audio</string>
+      <string>remote-notification</string>
+  </array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

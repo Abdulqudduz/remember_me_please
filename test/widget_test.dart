@@ -10,7 +10,7 @@ import 'package:remember_me_please/core/providers/theme_provider.dart';
 import 'package:remember_me_please/core/providers/language_provider.dart';
 import 'package:remember_me_please/core/providers/record_provider.dart';
 import 'package:remember_me_please/features/llm_model_download/provider/llm_download_page_provider.dart';
-import 'package:remember_me_please/features/conversations/pages/provider/conversation_provider.dart';
+import 'package:remember_me_please/features/conversations/provider/conversation_provider.dart';
 import 'package:remember_me_please/core/providers/playback_provider.dart';
 import 'package:remember_me_please/features/people/providers/camera_view_provider.dart';
 import 'package:remember_me_please/core/services/audio_service.dart';

@@ -1,4 +1,3 @@
-// data/models/conversation_model.dart
 import 'package:objectbox/objectbox.dart';
 
 // Sentinel constant used in copyWith to distinguish between "not provided"

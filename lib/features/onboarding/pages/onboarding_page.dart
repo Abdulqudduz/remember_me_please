@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:remember_me_please/core/widgets/app_scaffold.dart';
 import 'package:remember_me_please/features/llm_model_download/page/llm_model_download_page.dart';
 import 'dart:io' show Platform;
-import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/app_scaffold.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
 
 class OnboardingSession {
   static Route _createRoute(Widget page) {

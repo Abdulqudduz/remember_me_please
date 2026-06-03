@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/app_scaffold.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
+import 'package:remember_me_please/core/widgets/app_scaffold.dart';
+
 
 class PersonDetailPage extends StatelessWidget {
   final String personName;

@@ -1,6 +1,4 @@
-// download_page/config/constants.dart
-
-// OAuth Configuration for HuggingFace
+/// OAuth Configuration for HuggingFace
 const String hfClientId = 'd1049160-528c-48ea-88a4-5823a69e7e78';
 const String hfRedirectUri = 'com.example.rememberme://oauthredirect';
 const String authEndpoint = 'https://huggingface.co/oauth/authorize';
@@ -14,6 +12,10 @@ const String downloadUrl =
     'https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/$modelName?download=true';
 const String modelCardUrl =
     'https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm';
+
+// other model zip url
+const String supportingModelsZipUrl =
+    "https://github.com/Abdulqudduz/remember_me_models/releases/download/v1.0.0/koroko_whisper_speaker_diarization_models.zip";
 // SharedPreferences Keys
 const String downloadStateKey = 'download_state';
 const String downloadTaskIdKey = 'download_task_id';

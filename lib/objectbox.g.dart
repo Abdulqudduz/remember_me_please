@@ -15,6 +15,7 @@ import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import 'data/models/conversation_model.dart';
+import 'data/models/flashcard_model.dart';
 import 'data/models/person_model.dart';
 import 'data/models/reminder_model.dart';
 
@@ -227,6 +228,64 @@ final _entities = <obx_int.ModelEntity>[
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
   ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(5, 7318265989451231208),
+    name: 'FlashcardModel',
+    lastPropertyId: const obx_int.IdUid(8, 7502302593205999878),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 5162057918395938063),
+        name: 'id',
+        type: 6,
+        flags: 1,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 7676767109683360664),
+        name: 'question',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 9181153540432904807),
+        name: 'title',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 2758915275084369027),
+        name: 'subtitle',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 8750486766059687546),
+        name: 'frontImage',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 6202779270965608038),
+        name: 'backText',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 6004099343079026226),
+        name: 'categoryIndex',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 7502302593205999878),
+        name: 'createdAt',
+        type: 6,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -272,7 +331,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
     // Typically, this is done with `dart run build_runner build`.
     generatorVersion: obx_int.GeneratorVersion.v2025_12_16,
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(4, 7374516994593523704),
+    lastEntityId: const obx_int.IdUid(5, 7318265989451231208),
     lastIndexId: const obx_int.IdUid(1, 1265011307411470283),
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
@@ -572,6 +631,88 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
+    FlashcardModel: obx_int.EntityDefinition<FlashcardModel>(
+      model: _entities[3],
+      toOneRelations: (FlashcardModel object) => [],
+      toManyRelations: (FlashcardModel object) => {},
+      getId: (FlashcardModel object) => object.id,
+      setId: (FlashcardModel object, int id) {
+        object.id = id;
+      },
+      objectToFB: (FlashcardModel object, fb.Builder fbb) {
+        final questionOffset = fbb.writeString(object.question);
+        final titleOffset = fbb.writeString(object.title);
+        final subtitleOffset = object.subtitle == null
+            ? null
+            : fbb.writeString(object.subtitle!);
+        final frontImageOffset = object.frontImage == null
+            ? null
+            : fbb.writeString(object.frontImage!);
+        final backTextOffset = object.backText == null
+            ? null
+            : fbb.writeString(object.backText!);
+        fbb.startTable(9);
+        fbb.addInt64(0, object.id);
+        fbb.addOffset(1, questionOffset);
+        fbb.addOffset(2, titleOffset);
+        fbb.addOffset(3, subtitleOffset);
+        fbb.addOffset(4, frontImageOffset);
+        fbb.addOffset(5, backTextOffset);
+        fbb.addInt64(6, object.categoryIndex);
+        fbb.addInt64(7, object.createdAt);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final idParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final questionParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 6, '');
+        final titleParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 8, '');
+        final subtitleParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 10);
+        final frontImageParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 12);
+        final backTextParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 14);
+        final categoryIndexParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          16,
+          0,
+        );
+        final createdAtParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          18,
+          0,
+        );
+        final object = FlashcardModel(
+          id: idParam,
+          question: questionParam,
+          title: titleParam,
+          subtitle: subtitleParam,
+          frontImage: frontImageParam,
+          backText: backTextParam,
+          categoryIndex: categoryIndexParam,
+          createdAt: createdAtParam,
+        );
+
+        return object;
+      },
+    ),
   };
 
   return obx_int.ModelDefinition(model, bindings);
@@ -728,5 +869,48 @@ class ReminderModel_ {
   /// See [ReminderModel.iconIndex].
   static final iconIndex = obx.QueryIntegerProperty<ReminderModel>(
     _entities[2].properties[8],
+  );
+}
+
+/// [FlashcardModel] entity fields to define ObjectBox queries.
+class FlashcardModel_ {
+  /// See [FlashcardModel.id].
+  static final id = obx.QueryIntegerProperty<FlashcardModel>(
+    _entities[3].properties[0],
+  );
+
+  /// See [FlashcardModel.question].
+  static final question = obx.QueryStringProperty<FlashcardModel>(
+    _entities[3].properties[1],
+  );
+
+  /// See [FlashcardModel.title].
+  static final title = obx.QueryStringProperty<FlashcardModel>(
+    _entities[3].properties[2],
+  );
+
+  /// See [FlashcardModel.subtitle].
+  static final subtitle = obx.QueryStringProperty<FlashcardModel>(
+    _entities[3].properties[3],
+  );
+
+  /// See [FlashcardModel.frontImage].
+  static final frontImage = obx.QueryStringProperty<FlashcardModel>(
+    _entities[3].properties[4],
+  );
+
+  /// See [FlashcardModel.backText].
+  static final backText = obx.QueryStringProperty<FlashcardModel>(
+    _entities[3].properties[5],
+  );
+
+  /// See [FlashcardModel.categoryIndex].
+  static final categoryIndex = obx.QueryIntegerProperty<FlashcardModel>(
+    _entities[3].properties[6],
+  );
+
+  /// See [FlashcardModel.createdAt].
+  static final createdAt = obx.QueryIntegerProperty<FlashcardModel>(
+    _entities[3].properties[7],
   );
 }

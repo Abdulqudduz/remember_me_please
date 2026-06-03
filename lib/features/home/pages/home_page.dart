@@ -5,7 +5,7 @@ import 'package:remember_me_please/core/theme/app_theme.dart';
 import 'package:remember_me_please/data/models/reminder_model.dart';
 import 'package:remember_me_please/core/widgets/feature_card.dart';
 import 'package:remember_me_please/core/widgets/recording_modal.dart';
-import 'package:remember_me_please/features/conversations/pages/provider/conversation_provider.dart';
+import 'package:remember_me_please/features/conversations/provider/conversation_provider.dart';
 import 'package:remember_me_please/features/home/providers/reminder_provider.dart';
 import 'package:remember_me_please/features/home/widgets/reminder_carousel.dart';
 import 'package:remember_me_please/features/people/pages/camera_view_page.dart';
@@ -148,12 +148,24 @@ class HomePageContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Good morning',
-          style: Theme.of(context).textTheme.displaySmall?.copyWith(
-            color: AppColors.primary,
-            fontWeight: FontWeight.bold,
-          ),
+        Wrap(
+          children: [
+            Text(
+              'Good morning',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            SizedBox(width: 8),
+            Text(
+              'Quddus',
+              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 4),
         Text(

@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_theme.dart';
-import '../providers/navigation_provider.dart';
-import '../../home/pages/home_page.dart';
-import '../../conversations/pages/conversations_page.dart';
-import '../../people/pages/people_page.dart';
-import '../../settings/pages/settings_page.dart';
-import '../../../core/widgets/ai_assistant_modal.dart';
-import '../../../core/widgets/app_scaffold.dart';
-import '../../people/pages/add_person_page.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
+import 'package:remember_me_please/core/widgets/ai_assistant_modal.dart';
+import 'package:remember_me_please/core/widgets/app_scaffold.dart';
+import 'package:remember_me_please/features/conversations/pages/conversations_page.dart';
+import 'package:remember_me_please/features/flashcards/pages/create_memory_card_page.dart';
+import 'package:remember_me_please/features/flashcards/pages/flashcards_page.dart';
+import 'package:remember_me_please/features/home/pages/home_page.dart';
+import 'package:remember_me_please/features/navigation/providers/navigation_provider.dart';
+import 'package:remember_me_please/features/people/pages/people_page.dart';
+import 'package:remember_me_please/features/settings/pages/settings_page.dart';
 
 class MainNavigationPage extends StatelessWidget {
-  MainNavigationPage({super.key});
+  const MainNavigationPage({super.key});
 
   final List<Widget> _pages = const [
     HomePageContent(),
     ConversationsPage(),
     PeoplePageContent(),
+    FlashcardsPage(),
   ];
 
   String _getTitle(int index) {
@@ -27,6 +29,8 @@ class MainNavigationPage extends StatelessWidget {
         return 'Your Conversations';
       case 2:
         return 'People You Know';
+      case 3:
+        return 'Flashcards';
       default:
         return 'Mindful Sanctuary';
     }
@@ -72,7 +76,43 @@ class MainNavigationPage extends StatelessWidget {
             letterSpacing: -0.5,
           ),
         ),
-
+        leading:
+            (navProvider.currentIndex == 2 || navProvider.currentIndex == 3)
+            ? Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Center(
+                  child: CircleAvatar(
+                    radius: 22,
+                    backgroundColor: AppColors.primaryContainer.withValues(
+                      alpha: 0.2,
+                    ),
+                    child: IconButton(
+                      icon: Icon(
+                        navProvider.currentIndex == 2
+                            ? Icons.search
+                            : Icons.add,
+                        color: AppColors.primary,
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        if (navProvider.currentIndex == 2) {
+                          // search person
+                        } else {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const CreateMemoryCardPage(),
+                            ),
+                          );
+                        }
+                      },
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ),
+                ),
+              )
+            : null,
         actions: [
           IconButton(
             icon: const Icon(
@@ -133,6 +173,11 @@ class MainNavigationPage extends StatelessWidget {
                   icon: Icon(Icons.group_outlined, size: 28),
                   activeIcon: Icon(Icons.group, size: 28),
                   label: 'PEOPLE',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.style_outlined, size: 28),
+                  activeIcon: Icon(Icons.style, size: 28),
+                  label: 'FLASHCARDS',
                 ),
               ],
             ),

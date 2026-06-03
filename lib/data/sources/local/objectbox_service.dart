@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:remember_me_please/data/models/conversation_model.dart';
+import 'package:remember_me_please/data/models/flashcard_model.dart';
 import 'package:remember_me_please/data/models/person_model.dart';
 import 'package:remember_me_please/data/models/reminder_model.dart';
 import 'package:remember_me_please/main.dart';
@@ -10,22 +11,26 @@ class ObjectBoxService {
 
   late final Box<ConversationModel>? _conversationBox;
   late final Box<ReminderModel>? _reminderBox;
+  late final Box<FlashcardModel>? _flashcardBox;
 
   ObjectBoxService() {
     final store = objectBox?.store;
 
     if (store == null) {
-      debugPrint("WARNING: ObjectBox store is not initialized. Running database service in stub mode.");
+      debugPrint(
+        "WARNING: ObjectBox store is not initialized. Running database service in stub mode.",
+      );
       _personBox = null;
-
       _conversationBox = null;
       _reminderBox = null;
+      _flashcardBox = null;
       return;
     }
 
     _personBox = store.box<PersonModel>();
     _conversationBox = store.box<ConversationModel>();
     _reminderBox = store.box<ReminderModel>();
+    _flashcardBox = store.box<FlashcardModel>();
   }
 
   // Person CRUD
@@ -106,6 +111,43 @@ class ObjectBoxService {
       debugPrint("Error searching for face in ObjectBox: $e");
       return null;
     }
+  }
+
+  int addFlashcard(FlashcardModel flashcard) {
+    if (_flashcardBox == null) {
+      debugPrint("Stub Mode: Successfully simulated adding flashcard.");
+      return 1;
+    }
+    try {
+      return _flashcardBox.put(flashcard);
+    } on ObjectBoxException catch (e) {
+      debugPrint("ObjectBox Error saving flashcard: $e");
+      return 0;
+    } catch (e) {
+      debugPrint("Unknown Error saving flashcard: $e");
+      return 0;
+    }
+  }
+
+  List<FlashcardModel> getFlashcards() {
+    if (_flashcardBox == null) {
+      return [];
+    }
+    return _flashcardBox.getAll();
+  }
+
+  FlashcardModel? getFlashcardById(int id) {
+    if (_flashcardBox == null) {
+      return null;
+    }
+    return _flashcardBox.get(id);
+  }
+
+  bool deleteFlashcard(int id) {
+    if (_flashcardBox == null) {
+      return true;
+    }
+    return _flashcardBox.remove(id);
   }
 
   // Conversation CRUD
@@ -227,8 +269,8 @@ class ObjectBoxService {
     final keywords = lowerQuery.split(' ').where((w) => w.length > 2).toList();
 
     final relevantConversations = conversations.where((c) {
-      final searchTarget =
-          '${c.shortTitle} ${c.summary} ${c.personName}'.toLowerCase();
+      final searchTarget = '${c.shortTitle} ${c.summary} ${c.personName}'
+          .toLowerCase();
       return keywords.any((kw) => searchTarget.contains(kw));
     }).toList();
 

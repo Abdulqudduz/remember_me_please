@@ -2,7 +2,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:remember_me_please/features/llm_model_download/page/constants/constants.dart';
 
-class HuggingFaceDownloadService {
+class DownloadService {
   /// Enqueues the download natively and returns the Task ID.
   Future<String?> downloadModel(String token) async {
     try {
@@ -42,7 +42,7 @@ class HuggingFaceDownloadService {
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final taskId = await FlutterDownloader.enqueue(
-        url: "https://github.com/Abdulqudduz/remember_me_models/releases/download/v1.0.0/koroko_whisper_speaker_diarization_models.zip",
+        url: supportingModelsZipUrl,
         savedDir: appDir.path,
         fileName: "models.zip",
         showNotification: true,

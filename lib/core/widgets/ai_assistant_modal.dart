@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:remember_me_please/core/services/llm_service.dart';
+import 'package:remember_me_please/core/services/tts_service.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
+import 'package:remember_me_please/core/utils/llm_prompt_builder.dart';
+import 'package:remember_me_please/data/sources/local/objectbox_service.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import '../theme/app_theme.dart';
-import '../services/llm_service.dart';
-import '../services/tts_service.dart';
-import '../utils/llm_prompt_builder.dart';
-import '../../data/sources/local/objectbox_service.dart';
 
 // Represents the three sequential states of the AI assistant interaction.
 enum AssistantState { listening, thinking, response }
@@ -103,9 +103,7 @@ class _AIAssistantModalState extends State<AIAssistantModal> {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Listening View
-// ---------------------------------------------------------------------------
 
 /// Displays the mic icon and live speech-to-text transcript.
 ///
@@ -230,9 +228,7 @@ class _ListeningViewState extends State<_ListeningView> {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Thinking View
-// ---------------------------------------------------------------------------
 
 /// Runs the RAG pipeline while displaying a loading indicator.
 ///
@@ -414,7 +410,9 @@ class _ResponseViewState extends State<_ResponseView> {
     _isPlaying = TtsService().isPlaying;
 
     // Listen to global TTS player state changes to update the UI.
-    _ttsSubscription = TtsService().playerStateStream.listen((PlayerState state) {
+    _ttsSubscription = TtsService().playerStateStream.listen((
+      PlayerState state,
+    ) {
       if (mounted) {
         setState(() {
           _isPlaying = state == PlayerState.playing;
@@ -452,9 +450,7 @@ class _ResponseViewState extends State<_ResponseView> {
       debugPrint('Error playing TTS in ResponseView: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to generate audio response.'),
-          ),
+          const SnackBar(content: Text('Failed to generate audio response.')),
         );
       }
     } finally {
@@ -622,7 +618,8 @@ class _ResponseViewState extends State<_ResponseView> {
               icon: Icons.psychology,
               color: AppColors.secondaryContainer,
               onColor: AppColors.onSecondaryContainer,
-              onTap: () => widget.onAskFollowUp('What should I remember today?'),
+              onTap: () =>
+                  widget.onAskFollowUp('What should I remember today?'),
             ),
             const SizedBox(height: 12),
 
@@ -718,8 +715,7 @@ void showAIAssistantModal(BuildContext context, {String? conversationContext}) {
     context: context,
     isScrollControlled: true,
     backgroundColor: AppColors.transparent,
-    builder: (context) => AIAssistantModal(
-      conversationContext: conversationContext,
-    ),
+    builder: (context) =>
+        AIAssistantModal(conversationContext: conversationContext),
   );
 }

@@ -176,9 +176,58 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "5:7318265989451231208",
+      "lastPropertyId": "8:7502302593205999878",
+      "name": "FlashcardModel",
+      "properties": [
+        {
+          "id": "1:5162057918395938063",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7676767109683360664",
+          "name": "question",
+          "type": 9
+        },
+        {
+          "id": "3:9181153540432904807",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "4:2758915275084369027",
+          "name": "subtitle",
+          "type": 9
+        },
+        {
+          "id": "5:8750486766059687546",
+          "name": "frontImage",
+          "type": 9
+        },
+        {
+          "id": "6:6202779270965608038",
+          "name": "backText",
+          "type": 9
+        },
+        {
+          "id": "7:6004099343079026226",
+          "name": "categoryIndex",
+          "type": 6
+        },
+        {
+          "id": "8:7502302593205999878",
+          "name": "createdAt",
+          "type": 6
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "4:7374516994593523704",
+  "lastEntityId": "5:7318265989451231208",
   "lastIndexId": "1:1265011307411470283",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",

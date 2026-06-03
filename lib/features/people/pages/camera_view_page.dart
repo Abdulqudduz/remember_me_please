@@ -2,11 +2,11 @@ import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:remember_me_please/core/widgets/app_scaffold.dart';
 import 'package:remember_me_please/data/models/person_model.dart';
 import 'package:remember_me_please/features/people/pages/person_detail_page.dart';
 import 'package:remember_me_please/features/people/providers/camera_view_provider.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/app_scaffold.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
 
 class CameraViewPage extends StatefulWidget {
   const CameraViewPage({super.key});

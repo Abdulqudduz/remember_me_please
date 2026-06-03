@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/primary_button.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
+import 'package:remember_me_please/core/widgets/primary_button.dart';
 
 class ConversationCard extends StatelessWidget {
   final String name;

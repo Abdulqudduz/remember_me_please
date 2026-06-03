@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/app_scaffold.dart';
-import '../widgets/settings_widgets.dart';
-import '../providers/settings_provider.dart';
-import '../../../core/providers/theme_provider.dart';
-import '../../../core/providers/language_provider.dart';
+import 'package:remember_me_please/core/providers/language_provider.dart';
+import 'package:remember_me_please/core/providers/theme_provider.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
+import 'package:remember_me_please/core/widgets/app_scaffold.dart';
+import 'package:remember_me_please/features/settings/providers/settings_provider.dart';
+import 'package:remember_me_please/features/settings/widgets/settings_widgets.dart';
+ 
 
 
 class SettingsPage extends StatelessWidget {

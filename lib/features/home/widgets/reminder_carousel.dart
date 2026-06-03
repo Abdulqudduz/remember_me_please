@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../data/models/reminder_model.dart';
+import 'package:remember_me_please/core/theme/app_theme.dart';
+import 'package:remember_me_please/data/models/reminder_model.dart';
 import 'reminder_card.dart';
 
 class ReminderCarousel extends StatefulWidget {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:remember_me_please/data/models/conversation_model.dart';
 import 'package:remember_me_please/data/sources/local/objectbox_service.dart';
-import 'package:remember_me_please/features/conversations/pages/provider/conversation_provider.dart';
+import 'package:remember_me_please/features/conversations/provider/conversation_provider.dart';
 import 'package:remember_me_please/core/theme/app_theme.dart';
 import 'package:remember_me_please/features/conversations/widgets/conversation_card.dart';
 import 'conversation_detail_page.dart';

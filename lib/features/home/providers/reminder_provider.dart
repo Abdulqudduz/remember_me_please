@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../data/models/reminder_model.dart';
-import '../../../data/sources/local/objectbox_service.dart';
+import 'package:remember_me_please/data/models/reminder_model.dart';
+import 'package:remember_me_please/data/sources/local/objectbox_service.dart';
 
 class ReminderProvider with ChangeNotifier {
   List<ReminderModel> _reminders = [];
