@@ -1,31 +1,45 @@
 import 'package:flutter/foundation.dart';
-import 'package:remember_me_please/data/models/flashcard_model.dart';
-import 'package:remember_me_please/data/sources/local/objectbox_service.dart';
+import 'package:remember_me_please/core/models/flashcard_model.dart';
+import 'package:remember_me_please/data/repositories/flashcard_repository.dart';
 
-
+/// Represents the state of a specific category of flashcards
 class FlashcardCategoryState {
-  int currentIndex = 0;
-  bool isNext = true;
-  bool isRevealed = false;
   final List<FlashcardModel> cards;
+  int currentIndex;
+  bool isNext;
+  bool isRevealed;
 
-  FlashcardCategoryState({required this.cards});
+  FlashcardCategoryState({
+    required this.cards,
+    this.currentIndex = 0,
+    this.isNext = true,
+    this.isRevealed = false,
+  });
 }
 
 class FlashcardProvider extends ChangeNotifier {
-  final ObjectBoxService _objectBoxService = ObjectBoxService();
+  final FlashcardRepository flashcardRepository;
+
+  // Declare the missing _categories map
   Map<String, FlashcardCategoryState> _categories = {};
 
-  FlashcardProvider() {
+  FlashcardProvider({required this.flashcardRepository}) {
     _loadFlashcards();
   }
 
   void _loadFlashcards() {
-    final allFlashcards = _objectBoxService.getFlashcards();
+    // Use the injected repository instead of _objectBoxService
+    final allFlashcards = flashcardRepository.fetchAllFlashcards();
+
     _categories = {
       'People': FlashcardCategoryState(
         cards: allFlashcards
             .where((f) => f.category == FlashcardCategory.person)
+            .toList(),
+      ),
+      'Reminder': FlashcardCategoryState(
+        cards: allFlashcards
+            .where((f) => f.category == FlashcardCategory.reminder)
             .toList(),
       ),
       'Moments': FlashcardCategoryState(
@@ -35,6 +49,7 @@ class FlashcardProvider extends ChangeNotifier {
       ),
     };
     notifyListeners();
+    print(_categories);
   }
 
   FlashcardCategoryState getCategoryState(String category) {
@@ -63,7 +78,19 @@ class FlashcardProvider extends ChangeNotifier {
 
   void revealCard(String category) {
     final state = getCategoryState(category);
-    state.isRevealed = true;
-    notifyListeners();
+    if (!state.isRevealed) {
+      state.isRevealed = true;
+      notifyListeners();
+    }
+  }
+
+  void addFlashcard(FlashcardModel flashcard) {
+    flashcardRepository.addNewFlashcard(flashcard);
+    _loadFlashcards(); // Refresh the state after adding
+  }
+
+  void deleteFlashcard(int id) {
+    flashcardRepository.deleteFlashcardById(id);
+    _loadFlashcards(); // Refresh the state after deletion
   }
 }

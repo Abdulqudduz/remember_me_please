@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart'; // ML Kit
 import 'package:remember_me_please/core/utils/file_utils.dart';
 import 'package:remember_me_please/data/repositories/person_repository.dart';
-import 'package:remember_me_please/data/models/person_model.dart';
+import 'package:remember_me_please/core/models/person_model.dart';
 import 'package:remember_me_please/core/services/face_service.dart';
 
 class PeopleProvider with ChangeNotifier {
@@ -49,9 +49,8 @@ class PeopleProvider with ChangeNotifier {
         }
       }
 
-      // ========================================================
       // Generate embedding in memory before saving
-      // ========================================================
+
       Float32List? generatedEmbedding;
       try {
         final faceDetector = FaceDetector(
@@ -80,7 +79,6 @@ class PeopleProvider with ChangeNotifier {
       } catch (e) {
         debugPrint("Error generating face embedding: $e");
       }
-      // ========================================================
 
       // Create the Model and attach the new faceEmbedding
       final personToSave = PersonModel(

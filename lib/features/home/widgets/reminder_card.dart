@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remember_me_please/core/theme/app_theme.dart';
-import 'package:remember_me_please/data/models/reminder_model.dart';
+import 'package:remember_me_please/core/models/reminder_model.dart';
 
 class ReminderCard extends StatelessWidget {
   final ReminderModel reminder;
@@ -68,6 +68,8 @@ class ReminderCard extends StatelessWidget {
                             Text(
                               reminder.title,
                               style: Theme.of(context).textTheme.titleMedium,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             if (isActive && onComplete != null) ...[
                               const Spacer(),

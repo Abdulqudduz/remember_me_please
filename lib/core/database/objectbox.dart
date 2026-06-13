@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:remember_me_please/core/database/object_admin_test.dart';
 import 'package:remember_me_please/objectbox.g.dart';
 
 class ObjectBox {
@@ -26,6 +27,24 @@ class ObjectBox {
 
     // Open the connection! (openStore is generated inside objectbox.g.dart)
     final store = await openStore(directory: dbPath);
+
+    // Start the ObjectBox Admin web suite ONLY during development
+    if (kDebugMode) {
+      if (Admin.isAvailable()) {
+        try {
+          Admin(store);
+          debugPrint("🚀 ObjectBox Admin started! Connect via port 8090.");
+          testObjectBoxAdmin();
+        } catch (e, stack) {
+          debugPrint("❌ ObjectBox Admin failed to start: $e");
+          debugPrint("Stacktrace: $stack");
+        }
+      } else {
+        debugPrint(
+          "⚠️ ObjectBox Admin is NOT available on this device platform.",
+        );
+      }
+    }
 
     return ObjectBox._create(store);
   }

@@ -5,6 +5,7 @@ import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:remember_me_please/core/config/constants.dart';
 import 'package:remember_me_please/core/services/active_person_tracker.dart';
 import 'package:sherpa_onnx/sherpa_onnx.dart' as sherpa_onnx;
 import 'package:remember_me_please/core/services/llm_service.dart';
@@ -13,8 +14,8 @@ import 'package:remember_me_please/core/services/whisper_service.dart';
 import 'package:remember_me_please/core/services/diarization_service.dart';
 import 'package:remember_me_please/core/utils/file_helper.dart';
 import 'package:remember_me_please/core/theme/app_theme.dart';
-import 'package:remember_me_please/data/models/conversation_model.dart';
-import 'package:remember_me_please/data/models/reminder_model.dart';
+import 'package:remember_me_please/core/models/conversation_model.dart';
+import 'package:remember_me_please/core/models/reminder_model.dart';
 import 'package:remember_me_please/data/sources/local/objectbox_service.dart';
 
 class QueuedConversation {
@@ -35,6 +36,7 @@ class ConversationProvider extends ChangeNotifier {
   bool _isProcessing = false;
   String _statusMessage = "Ready";
   final Queue<QueuedConversation> _audioQueue = Queue<QueuedConversation>();
+  final objectBoxService = ObjectBoxService();
 
   bool get isProcessing => _isProcessing;
   String get statusMessage => _statusMessage;
@@ -58,6 +60,10 @@ class ConversationProvider extends ChangeNotifier {
     _processNextInQueue();
   }
 
+  int? updateConversation(ConversationModel conversation) {
+    return objectBoxService.addOrUpdateConversation(conversation);
+  }
+
   Future<void> _processNextInQueue() async {
     if (_isProcessing || _audioQueue.isEmpty) return;
 
@@ -77,20 +83,18 @@ class ConversationProvider extends ChangeNotifier {
       final appDir = await getApplicationDocumentsDirectory();
       final paths = {
         'audioPath': currentAudioPath,
-        'segPath': '${appDir.path}/models/speaker_diarization/model.onnx',
-        'embPath':
-            '${appDir.path}/models/speaker_diarization/3dspeaker_speech_eres2net_base_sv_zh-cn_3dspeaker_16k.onnx',
+        'segPath': '${appDir.path}$kSegPath',
+        'embPath': '${appDir.path}$kEmbPath',
       };
 
-      // PHASE 1: ISOLATE
+      // ISOLATE
       final slicedChunks = await Isolate.run(
         () => _diarizationAndSlicingWorker(paths),
       );
 
-      // PHASE 2: WHISPER
+      // WHISPER
       List<Map<String, dynamic>> conversationLog = [];
-      final whisperModelPath =
-          '${appDir.path}/models/whisper_base_en/ggml-base.en.bin';
+      final whisperModelPath = '${appDir.path}$kWhisperPath';
 
       for (int i = 0; i < slicedChunks.length; i++) {
         final chunk = slicedChunks[i];
@@ -118,9 +122,8 @@ class ConversationProvider extends ChangeNotifier {
         if (await chunkFile.exists()) await chunkFile.delete();
       }
 
-      // ====================================================================
-      // THE SHORT-CIRCUIT GUARD: Stop here if it was a 3-second accidental tap!
-      // ====================================================================
+      // Stop here if it was a 3-second accidental tap!
+
       if (conversationLog.isEmpty) {
         debugPrint(
           "Pipeline Aborted: Recording was too short or no speech detected.",
@@ -135,14 +138,13 @@ class ConversationProvider extends ChangeNotifier {
         notifyListeners();
 
         _processNextInQueue();
-        return; // EXIT THE FUNCTION ENTIRELY! (Do not run Phase 3 or 4)
+        return; // EXIT THE FUNCTION ENTIRELY
       }
-      // ====================================================================
 
       JsonEncoder encoder = const JsonEncoder.withIndent('  ');
       final finalJsonOutput = encoder.convert(conversationLog);
 
-      // PHASE 3: GEMMA (JSON Extraction & Correction)
+      // GEMMA (JSON Extraction & Correction)
       _statusMessage = "AI is structuring and correcting transcript...";
       notifyListeners();
 
@@ -156,19 +158,20 @@ class ConversationProvider extends ChangeNotifier {
         final conversationSummary =
             enhancedData['_conversationSummary'] ?? 'No summary.';
 
-        // PHASE 4.5: TTS GENERATION
+        // TTS GENERATION
         // Generate a spoken audio version of the summary text so the user
         // can listen to it on the detail page via "Read aloud".
         _statusMessage = "Generating audio summary...";
         notifyListeners();
+        final appDir = await getApplicationDocumentsDirectory();
 
-        final audioSummaryPath =
-            await TtsService().generateAndSaveSummaryAudio(conversationSummary);
+        final summaryAudioPath = await TtsService().generateAndSaveAudio(
+          text: conversationSummary,
+          pathToSaveAudio: appDir,
+        );
 
-        if (audioSummaryPath != null) {
-          debugPrint(
-            'Pipeline: TTS audio saved to $audioSummaryPath',
-          );
+        if (summaryAudioPath != null) {
+          debugPrint('Pipeline: TTS audio saved to $summaryAudioPath');
         } else {
           debugPrint(
             'Pipeline: TTS generation skipped or failed. '
@@ -189,14 +192,13 @@ class ConversationProvider extends ChangeNotifier {
           transcriptJson: jsonEncode(enhancedData['transcript'] ?? []),
           conversationAudioFilePathUrl: currentAudioPath,
           // Store the TTS-generated WAV path (may be null if TTS unavailable)
-          summaryAudioPath: audioSummaryPath,
+          summaryAudioPath: summaryAudioPath,
         );
 
-        // PHASE 5: SAVE TO OBJECTBOX
-        final objectBoxService = ObjectBoxService();
-        final savedId = objectBoxService.addConversation(newConversation);
+        // SAVE TO OBJECTBOX
+        final int? savedId = updateConversation(newConversation);
 
-        if (savedId > 0) {
+        if (savedId != null && savedId > 0) {
           debugPrint('Pipeline: Successfully saved to database. ID: $savedId');
 
           // Extract the elements from the enhancedData['_actionItems'] array.
@@ -274,7 +276,9 @@ class ConversationProvider extends ChangeNotifier {
 
                 // Deduce reminder time from text patterns, otherwise default to "Upcoming".
                 String reminderTime = "Upcoming";
-                final timeRegex = RegExp(r'\b(?:at\s+)?(\d{1,2}(?::\d{2})?\s*(?:am|pm|AM|PM))\b');
+                final timeRegex = RegExp(
+                  r'\b(?:at\s+)?(\d{1,2}(?::\d{2})?\s*(?:am|pm|AM|PM))\b',
+                );
                 final match = timeRegex.firstMatch(reminderText);
                 if (match != null) {
                   reminderTime = match.group(1) ?? "Upcoming";
@@ -282,7 +286,8 @@ class ConversationProvider extends ChangeNotifier {
                   reminderTime = "Morning";
                 } else if (lowerText.contains("afternoon")) {
                   reminderTime = "Afternoon";
-                } else if (lowerText.contains("evening") || lowerText.contains("night")) {
+                } else if (lowerText.contains("evening") ||
+                    lowerText.contains("night")) {
                   reminderTime = "Evening";
                 }
 
@@ -300,7 +305,9 @@ class ConversationProvider extends ChangeNotifier {
                 // Save to ObjectBox reminder box directly.
                 final reminderId = objectBoxService.addReminder(newReminder);
                 if (reminderId > 0) {
-                  debugPrint('Pipeline: Successfully saved auto reminder. ID: $reminderId');
+                  debugPrint(
+                    'Pipeline: Successfully saved auto reminder. ID: $reminderId',
+                  );
                 } else {
                   debugPrint('Pipeline: Failed to save auto reminder.');
                 }
@@ -324,9 +331,7 @@ class ConversationProvider extends ChangeNotifier {
   }
 }
 
-// ============================================================================
 // BACKGROUND WORKER (ISOLATE THREAD)
-// ============================================================================
 // Only handles the Sherpa Diarization math. No complex Flutter bindings needed!
 Future<List<Map<String, dynamic>>> _diarizationAndSlicingWorker(
   Map<String, String> paths,
@@ -360,7 +365,7 @@ Future<List<Map<String, dynamic>>> _diarizationAndSlicingWorker(
     int startSample = (segment.start * waveData.sampleRate).toInt();
     int endSample = (segment.end * waveData.sampleRate).toInt();
 
-     if (endSample > waveData.samples.length) {
+    if (endSample > waveData.samples.length) {
       endSample = waveData.samples.length;
     }
     if (startSample < 0) {

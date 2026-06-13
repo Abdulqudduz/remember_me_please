@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:remember_me_please/data/models/reminder_model.dart';
+import 'package:remember_me_please/core/models/reminder_model.dart';
 import 'package:remember_me_please/data/sources/local/objectbox_service.dart';
 
 class ReminderProvider with ChangeNotifier {

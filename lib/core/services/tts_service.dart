@@ -1,18 +1,21 @@
 // Singleton service that wraps the Kokoro int8 ONNX model via sherpa_onnx.
 // The model is expected to be pre-downloaded by the user into the application
-// documents directory at: <appDocDir>/kokoro_int8_onnx/
+// documents directory at: <appDir>/models/kokoro_int8_onnx/
 // This service does NOT copy assets from the bundle — it reads directly from
 // the local file system path.
+import 'dart:convert';
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:remember_me_please/core/config/constants.dart';
 import 'package:remember_me_please/core/utils/wav_helper.dart';
 import 'package:sherpa_onnx/sherpa_onnx.dart' as sherpa_onnx;
 
 /// Singleton service for offline text-to-speech using the Kokoro int8 model.
 ///
-/// Call [init] once before using [generateAndSaveSummaryAudio]. The service
+/// Call [init] once before using [generateAndSaveAudio]. The service
 /// is safe to call [init] multiple times — subsequent calls are no-ops.
 class TtsService {
   // Private singleton constructor
@@ -29,7 +32,7 @@ class TtsService {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   // Cache to store generated audio paths by text hash
-  final Map<int, String> _audioCache = {};
+  final Map<String, String> _audioCache = {};
 
   // Flag to avoid re-initializing on repeated calls
   bool _isInitialized = false;
@@ -76,7 +79,7 @@ class TtsService {
     //   print(item.path);
     // }
 
-    final kokoroPath = '${appDir.path}/models/kokoro_int8_onnx';
+    final kokoroPath = '${appDir.path}$kKokoroPath';
 
     debugPrint('TtsService: Loading Kokoro model from $kokoroPath');
 
@@ -92,10 +95,10 @@ class TtsService {
     final ttsConfig = sherpa_onnx.OfflineTtsConfig(
       model: sherpa_onnx.OfflineTtsModelConfig(
         kokoro: sherpa_onnx.OfflineTtsKokoroModelConfig(
-          model: '$kokoroPath/model.int8.onnx',
-          voices: '$kokoroPath/voices.bin',
-          tokens: '$kokoroPath/tokens.txt',
-          dataDir: '$kokoroPath/espeak-ng-data',
+          model: '$kokoroPath$kModelName',
+          voices: '$kokoroPath$kVoicesName',
+          tokens: '$kokoroPath$kTokensName',
+          dataDir: '$kokoroPath$kDataDirName',
         ),
         numThreads: 1,
         debug: kDebugMode, // Only enable verbose logging in debug builds
@@ -114,32 +117,62 @@ class TtsService {
   }
 
   /// Speaks the given text using the local TTS engine.
-  /// If the text has been generated before in this session, it plays from cache.
-  /// Otherwise, it generates a new WAV file and plays it.
-  Future<void> speak(String text) async {
-    if (text.trim().isEmpty) return;
+  /// Prioritizes the explicitly provided [audioPath] if it exists.
+  /// Falls back to the internal cache if generated previously in this session.
+  /// Generates a new WAV file and plays it as a last resort.
 
+  Future<String?> speak(String text, {String? audioPath}) async {
     if (isPlaying) {
       await stop();
     }
 
-    // We use a hash of the text content as a cache key. Storing the paths to previously
-    // generated audio files prevents redundant and computationally expensive model inferences
-    // when the user plays the same text multiple times.
-    final textHash = text.trim().hashCode;
-    String? audioPath = _audioCache[textHash];
+    // Check the explicitly passed audio path first
 
-    if (audioPath != null && File(audioPath).existsSync()) {
-      debugPrint('TtsService: Playing from cache: $audioPath');
-      await _audioPlayer.play(DeviceFileSource(audioPath));
-      return;
+    if (audioPath != null) {
+      if (File(audioPath).existsSync()) {
+        debugPrint('TtsService: Playing from actual path: $audioPath');
+        try {
+          await _audioPlayer.play(DeviceFileSource(audioPath));
+          return audioPath;
+        } catch (e) {
+          debugPrint('TtsService: Error playing actual audio: $e');
+        }
+      } else {
+        debugPrint(
+          'TtsService: Provided audio path does not exist: $audioPath',
+        );
+      }
     }
 
-    // Generate new audio if not in cache or file is missing
-    audioPath = await generateAndSaveSummaryAudio(text);
-    if (audioPath != null && File(audioPath).existsSync()) {
-      _audioCache[textHash] = audioPath;
-      await _audioPlayer.play(DeviceFileSource(audioPath));
+    // Check the internal session cache for previously generated audio for this exact text
+
+    final textHash = md5.convert(utf8.encode(text.trim())).toString();
+    final cachedAudioPath = _audioCache[textHash];
+
+    if (cachedAudioPath != null && File(cachedAudioPath).existsSync()) {
+      debugPrint('TtsService: Playing from cache: $cachedAudioPath');
+      try {
+        await _audioPlayer.play(DeviceFileSource(cachedAudioPath));
+        return cachedAudioPath;
+      } catch (e) {
+        debugPrint('TtsService: Error playing cached audio: $e');
+      }
+    }
+    // Fallback to generating it right now if it's not cached. This is the slowest path but guarantees playback.
+    if (text.trim().isEmpty) return null;
+
+    final appDir = await getApplicationDocumentsDirectory();
+
+    final generatedAudioPath = await generateAndSaveAudio(
+      text: text,
+      pathToSaveAudio: appDir,
+    );
+
+    if (generatedAudioPath != null && File(generatedAudioPath).existsSync()) {
+      _audioCache[textHash] =
+          generatedAudioPath; // Save it to cache for next time
+      await _audioPlayer.play(DeviceFileSource(generatedAudioPath));
+      return generatedAudioPath;
     } else {
       debugPrint('TtsService: Failed to generate audio for playback.');
     }
@@ -151,7 +184,10 @@ class TtsService {
   }
 
   /// Generates speech audio for [text] and saves it as a WAV file.
-  Future<String?> generateAndSaveSummaryAudio(String text) async {
+  Future<String?> generateAndSaveAudio({
+    required String text,
+    required Directory pathToSaveAudio,
+  }) async {
     if (!_isInitialized || _tts == null) {
       debugPrint(
         'TtsService: generateAndSaveSummaryAudio called but engine is not initialized.',
@@ -170,10 +206,9 @@ class TtsService {
       // The ONNX model returns raw PCM float samples. We must convert these into a standard
       // WAV format by adding the appropriate headers so the audio player can decode the stream.
       final wavBytes = WavHelper.pcmToWav(result.samples, result.sampleRate);
-      final tempDir = await getTemporaryDirectory();
       final fileName =
           'summary_audio_${DateTime.now().millisecondsSinceEpoch}.wav';
-      final outputFile = File('${tempDir.path}/$fileName');
+      final outputFile = File('${pathToSaveAudio.path}/$fileName');
       await outputFile.writeAsBytes(wavBytes);
       debugPrint('TtsService: Audio saved to ${outputFile.path}');
       return outputFile.path;

@@ -1,24 +1,24 @@
 import 'dart:typed_data';
-import 'package:remember_me_please/data/models/person_model.dart';
+import 'package:remember_me_please/core/models/person_model.dart';
 import 'package:remember_me_please/data/sources/local/objectbox_service.dart';
 
 class PersonRepository {
-  PersonRepository({required this.objectBoxservice});
+  PersonRepository({required this.objectBoxService});
 
-  final ObjectBoxService objectBoxservice;
+  final ObjectBoxService objectBoxService;
   List<PersonModel> fetchAllPeople() {
-    return objectBoxservice.getPeople();
+    return objectBoxService.getPeople();
   }
 
   int addNewPerson(PersonModel person) {
-    return objectBoxservice.addPerson(person);
+    return objectBoxService.addPerson(person);
   }
 
   bool deletePersonById(int id) {
-    return objectBoxservice.deletePerson(id);
+    return objectBoxService.deletePerson(id);
   }
 
   PersonModel? findMatchingPerson(Float32List targetEmbedding) {
-    return objectBoxservice.findMatchingPerson(targetEmbedding);
+    return objectBoxService.findMatchingPerson(targetEmbedding);
   }
 }

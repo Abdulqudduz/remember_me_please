@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:remember_me_please/core/theme/app_theme.dart';
-import 'package:remember_me_please/core/widgets/ai_assistant_modal.dart';
 import 'package:remember_me_please/core/widgets/app_scaffold.dart';
+import 'package:remember_me_please/features/ai_assistant/widgets/show_assistant_modal.dart';
 import 'package:remember_me_please/features/conversations/pages/conversations_page.dart';
 import 'package:remember_me_please/features/flashcards/pages/create_memory_card_page.dart';
 import 'package:remember_me_please/features/flashcards/pages/flashcards_page.dart';

@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_gemma/flutter_gemma.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:remember_me_please/core/utils/llm_prompt_builder.dart';
-import 'package:remember_me_please/features/llm_model_download/page/constants/constants.dart';
+import 'package:remember_me_please/features/llm_model_download/page/configs/constants.dart';
 
 class LlmService {
   static final LlmService _instance = LlmService._internal();
@@ -88,7 +88,8 @@ class LlmService {
 
     try {
       // Clear history so past transcripts don't confuse the current one
-      await _session!.clearHistory();
+      await _session?.close();
+      _session = await _model!.createSession(temperature: 0.7);
 
       // Build the strict JSON prompt
       final promptText = LlmPromptBuilder.buildEnhancedTranscriptPrompt(
@@ -155,7 +156,8 @@ class LlmService {
 
     try {
       // Clear previous chat history so the RAG context is the only input
-      await _session!.clearHistory();
+      await _session?.close();
+      _session = await _model!.createSession(temperature: 0.7);
 
       // Add the fully-formed RAG prompt as the user turn
       await _session!.addQueryChunk(Message.text(text: prompt, isUser: true));

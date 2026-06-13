@@ -3,7 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:remember_me_please/core/widgets/app_scaffold.dart';
-import 'package:remember_me_please/data/models/person_model.dart';
+import 'package:remember_me_please/core/models/person_model.dart';
 import 'package:remember_me_please/features/people/pages/person_detail_page.dart';
 import 'package:remember_me_please/features/people/providers/camera_view_provider.dart';
 import 'package:remember_me_please/core/theme/app_theme.dart';
@@ -21,7 +21,7 @@ class _CameraViewPageState extends State<CameraViewPage> {
 
   @override
   void initState() {
-    super.initState(); 
+    super.initState();
 
     _cameraProvider = context.read<CameraProvider>();
 
@@ -43,16 +43,7 @@ class _CameraViewPageState extends State<CameraViewPage> {
     Future.delayed(const Duration(microseconds: 100), () {
       if (!mounted) return;
 
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => PersonDetailPage(
-            personName: person.name,
-            relationship: person.relationship,
-            description: person.memoryNote1,
-            profilePicturePath: person.profilePicturePath,
-          ),
-        ),
-      );
+      _navigateToDetail(context, person, fromCameraViewPage: true);
     });
   }
 
@@ -186,10 +177,15 @@ class _CameraViewPageState extends State<CameraViewPage> {
     );
   }
 
-  void _navigateToDetail(BuildContext context, PersonModel person) {
-    Navigator.of(context).push(
+  void _navigateToDetail(
+    BuildContext context,
+    PersonModel person, {
+    required bool fromCameraViewPage,
+  }) {
+    Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (_) => PersonDetailPage(
+          fromCameraViewPage: fromCameraViewPage,
           personName: person.name,
           relationship: person.relationship,
           description: person.memoryNote1,

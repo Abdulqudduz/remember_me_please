@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:remember_me_please/data/models/conversation_model.dart';
-import 'package:remember_me_please/data/models/flashcard_model.dart';
-import 'package:remember_me_please/data/models/person_model.dart';
-import 'package:remember_me_please/data/models/reminder_model.dart';
+import 'package:remember_me_please/core/models/conversation_model.dart';
+import 'package:remember_me_please/core/models/flashcard_model.dart';
+import 'package:remember_me_please/core/models/person_model.dart';
+import 'package:remember_me_please/core/models/reminder_model.dart';
 import 'package:remember_me_please/main.dart';
 import 'package:remember_me_please/objectbox.g.dart';
 
@@ -152,7 +152,7 @@ class ObjectBoxService {
 
   // Conversation CRUD
 
-  int addConversation(ConversationModel conversation) {
+  int addOrUpdateConversation(ConversationModel conversation) {
     if (_conversationBox == null) {
       debugPrint("Stub Mode: Successfully simulated adding conversation.");
       return 1;

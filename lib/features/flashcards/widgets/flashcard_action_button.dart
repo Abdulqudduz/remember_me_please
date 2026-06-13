@@ -22,18 +22,18 @@ class FlashcardActionButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 72,
+        // height: 72,
         decoration: BoxDecoration(
           color: backgroundColor!.withValues(alpha: 0.7),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
         ),
 
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: contentColor, size: 28),
+              Icon(icon, color: contentColor, size: 20),
               Text(
                 label,
                 style: TextStyle(

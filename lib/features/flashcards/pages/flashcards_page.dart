@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:remember_me_please/core/theme/app_theme.dart';
 import 'package:remember_me_please/features/flashcards/providers/flashcard_provider.dart';
 import 'package:remember_me_please/features/flashcards/widgets/flashcard_view.dart';
- 
+
 class FlashcardsPage extends StatelessWidget {
   const FlashcardsPage({super.key});
 
@@ -77,8 +77,7 @@ class _FlashcardsPageContentState extends State<FlashcardsPageContent>
             ),
           ),
 
-          const SizedBox(height: 3),
-
+          // const SizedBox(height: 3),
           Expanded(
             child: TabBarView(
               controller: _tabController,

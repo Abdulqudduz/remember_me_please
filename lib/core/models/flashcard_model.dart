@@ -10,8 +10,8 @@ class FlashcardModel {
   final String question;
   final String title;
   final String? subtitle;
-  final String? frontImage;
-  final String? backText;
+  final String? frontCardImage;
+  final String? moreDetails;
 
   /// Persisted as the enum index (0 = person, 1 = reminder, 2 = moment).
   int categoryIndex;
@@ -28,8 +28,8 @@ class FlashcardModel {
     required this.question,
     required this.title,
     this.subtitle,
-    this.frontImage,
-    this.backText,
+    this.frontCardImage,
+    this.moreDetails,
     this.categoryIndex = 0,
     int? createdAt,
   }) : createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch;
@@ -49,8 +49,8 @@ class FlashcardModel {
       question: question ?? this.question,
       title: title ?? this.title,
       subtitle: subtitle ?? this.subtitle,
-      frontImage: frontImage ?? this.frontImage,
-      backText: backText ?? this.backText,
+      frontCardImage: frontImage ?? this.frontCardImage,
+      moreDetails: backText ?? this.moreDetails,
       categoryIndex: categoryIndex ?? this.categoryIndex,
       createdAt: createdAt ?? this.createdAt,
     );

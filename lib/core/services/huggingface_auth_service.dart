@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http/http.dart' as http;
-import 'package:remember_me_please/features/llm_model_download/page/constants/constants.dart';
+import 'package:remember_me_please/features/llm_model_download/page/configs/constants.dart';
 import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';

@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:remember_me_please/core/theme/app_theme.dart';
-import 'package:remember_me_please/core/widgets/ai_assistant_modal.dart';
 import 'package:remember_me_please/core/widgets/app_scaffold.dart';
-import 'package:remember_me_please/data/models/conversation_model.dart';
+import 'package:remember_me_please/core/models/conversation_model.dart';
 import 'package:remember_me_please/core/widgets/audio_player_widget.dart';
+import 'package:remember_me_please/data/sources/local/objectbox_service.dart';
+import 'package:remember_me_please/features/ai_assistant/widgets/show_assistant_modal.dart';
+import 'package:remember_me_please/features/conversations/provider/conversation_provider.dart';
 import 'package:remember_me_please/features/conversations/widgets/chat_bubble.dart';
 import 'package:remember_me_please/core/services/tts_service.dart';
 
@@ -43,7 +46,9 @@ class _ConversationDetailPageState extends State<ConversationDetailPage> {
     _isSummaryPlaying = TtsService().isPlaying;
 
     // Listen to the TTS service player's state so the button icon updates correctly
-    _ttsSubscription = TtsService().playerStateStream.listen((PlayerState state) {
+    _ttsSubscription = TtsService().playerStateStream.listen((
+      PlayerState state,
+    ) {
       if (mounted) {
         setState(() {
           _isSummaryPlaying = state == PlayerState.playing;
@@ -77,7 +82,37 @@ class _ConversationDetailPageState extends State<ConversationDetailPage> {
       await TtsService().stop();
     } else {
       // Play via the TTS service (generates if needed)
-      await TtsService().speak(widget.conversation.summary);
+      final audioPath = widget.conversation.summaryAudioPath;
+      debugPrint('summary audio in path: $audioPath');
+      if (audioPath == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Summary audio not available. Generating new audio.'),
+          ),
+        );
+        return;
+      }
+
+      final actualPlayedPath = await TtsService().speak(
+        widget.conversation.summary,
+        audioPath: audioPath,
+      );
+      if (actualPlayedPath != null && actualPlayedPath != audioPath) {
+        widget.conversation.summaryAudioPath = actualPlayedPath;
+        if (context.mounted) {
+          context.read<ConversationProvider>().updateConversation(
+            widget.conversation,
+          );
+        }
+
+        debugPrint(
+          'TTS service returned a different audio path than expected. Updated conversation with new path: $actualPlayedPath',
+        );
+      } else if (actualPlayedPath != audioPath) {
+        debugPrint(
+          'Warning: TTS service played a different audio than expected. This may indicate a caching issue.',
+        );
+      }
     }
   }
 
@@ -316,87 +351,6 @@ class _ConversationDetailPageState extends State<ConversationDetailPage> {
                 fontSize: 20,
                 height: 1.4,
                 color: AppColors.onSurface,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionItem(
-    BuildContext context, {
-    required String title,
-    required String time,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppColors.tertiaryContainer,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.onTertiaryContainer,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.calendar_today,
-                          size: 18,
-                          color: AppColors.onTertiaryContainer,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            time,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: AppColors.onTertiaryContainer,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.surfaceContainerLowest,
-                foregroundColor: AppColors.tertiary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
-                ),
-              ),
-              child: const Text(
-                'Add as a reminder',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
           ),

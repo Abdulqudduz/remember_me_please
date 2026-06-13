@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:remember_me_please/core/theme/app_theme.dart';
 import 'package:remember_me_please/core/widgets/app_scaffold.dart';
 
-
 class PersonDetailPage extends StatelessWidget {
   final String personName;
   final String relationship;
   final String description;
   final String? profilePicturePath;
+  final bool fromCameraViewPage;
 
   const PersonDetailPage({
     super.key,
@@ -16,6 +16,7 @@ class PersonDetailPage extends StatelessWidget {
     required this.relationship,
     required this.description,
     this.profilePicturePath,
+    this.fromCameraViewPage = false,
   });
 
   @override
@@ -78,10 +79,9 @@ class PersonDetailPage extends StatelessWidget {
       leading: Padding(
         padding: const EdgeInsets.all(8.0),
         child: CircleAvatar(
-          backgroundColor: AppColors.black.withValues(alpha: 0.3),
           child: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
+            icon: Icon(
+              fromCameraViewPage ? Icons.close : Icons.arrow_back,
               color: AppColors.surfaceContainerLow,
             ),
             onPressed: () => Navigator.of(context).pop(),
@@ -100,9 +100,9 @@ class PersonDetailPage extends StatelessWidget {
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                   begin: Alignment.topCenter,
-                   end: Alignment.bottomCenter,
-                   colors: [AppColors.transparent, AppColors.black45],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [AppColors.transparent, AppColors.black45],
                 ),
               ),
             ),

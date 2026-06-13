@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:remember_me_please/core/theme/app_theme.dart';
 import 'package:remember_me_please/core/widgets/app_scaffold.dart';
 import 'package:remember_me_please/core/widgets/form_widgets.dart';
-import 'package:remember_me_please/data/models/flashcard_model.dart';
+import 'package:remember_me_please/core/models/flashcard_model.dart';
+import 'package:remember_me_please/data/repositories/flashcard_repository.dart';
+import 'package:remember_me_please/features/flashcards/providers/flashcard_provider.dart';
 import 'package:remember_me_please/features/people/widgets/photo_uploader_widget.dart';
-
+import 'package:remember_me_please/main.dart';
 
 class CreateMemoryCardPage extends StatefulWidget {
   const CreateMemoryCardPage({super.key});
@@ -43,6 +46,16 @@ class _CreateMemoryCardPageState extends State<CreateMemoryCardPage> {
 
   void _saveCard() {
     if (_formKey.currentState!.validate()) {
+      final provider = context.read<FlashcardProvider>();
+      final newCard = FlashcardModel(
+        question: _nameController.text,
+        categoryIndex: _selectedCategory.index,
+        title: _nameController.text,
+        subtitle: _relationshipController.text,
+        moreDetails: _moreDetailsController.text,
+        frontCardImage: _imageFile?.path,
+      );
+      provider.addFlashcard(newCard);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Memory Card Created!'),

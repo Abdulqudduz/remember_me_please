@@ -7,6 +7,7 @@ import 'package:remember_me_please/core/database/objectbox.dart';
 import 'package:remember_me_please/core/providers/playback_provider.dart';
 import 'package:remember_me_please/core/services/audio_player_service.dart';
 import 'package:remember_me_please/core/services/tts_service.dart';
+import 'package:remember_me_please/data/repositories/flashcard_repository.dart';
 import 'package:remember_me_please/features/conversations/provider/conversation_provider.dart';
 import 'package:remember_me_please/features/flashcards/providers/flashcard_provider.dart';
 import 'package:remember_me_please/features/llm_model_download/provider/llm_download_page_provider.dart';
@@ -52,7 +53,10 @@ Future<void> main() async {
 
   final ObjectBoxService objectBoxService = ObjectBoxService();
   final PersonRepository personRepository = PersonRepository(
-    objectBoxservice: objectBoxService,
+    objectBoxService: objectBoxService,
+  );
+  final FlashcardRepository flashcardRepository = FlashcardRepository(
+    objectBoxService: objectBoxService,
   );
   final AudioService audioService = AudioService();
   await FlutterDownloader.initialize(debug: kDebugMode, ignoreSsl: true);
@@ -71,7 +75,10 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => RecordProvider(audioService)),
         ChangeNotifierProvider(create: (_) => LlmDownloadProvider()),
         ChangeNotifierProvider(create: (_) => ConversationProvider()),
-        ChangeNotifierProvider(create: (_) => FlashcardProvider()),
+        ChangeNotifierProvider(
+          create: (_) =>
+              FlashcardProvider(flashcardRepository: flashcardRepository),
+        ),
         ChangeNotifierProvider(
           create: (_) => PlaybackProvider(AudioPlayerService()),
         ),

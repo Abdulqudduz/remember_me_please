@@ -19,6 +19,7 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool personUrlIsValid = avatarUrl != null && avatarUrl!.isNotEmpty;
     return Column(
       crossAxisAlignment: isMe
           ? CrossAxisAlignment.end
@@ -31,7 +32,7 @@ class ChatBubble extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (!isMe) ...[
-              if (avatarUrl != null)
+              if (personUrlIsValid)
                 CircleAvatar(
                   radius: 20,
                   backgroundImage: NetworkImage(avatarUrl!),
@@ -54,7 +55,7 @@ class ChatBubble extends StatelessWidget {
               CircleAvatar(
                 radius: 20,
                 backgroundColor: AppColors.primaryContainer,
-                backgroundImage: avatarUrl != null
+                backgroundImage: personUrlIsValid
                     ? NetworkImage(avatarUrl!)
                     : null,
                 child: avatarUrl == null

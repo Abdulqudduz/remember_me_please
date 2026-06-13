@@ -1,4 +1,4 @@
-import 'package:remember_me_please/data/models/conversation_model.dart';
+import 'package:remember_me_please/core/models/conversation_model.dart';
 import 'package:remember_me_please/data/sources/local/objectbox_service.dart';
 
 class ConversationRepository {
@@ -14,8 +14,8 @@ class ConversationRepository {
     return objectBoxService.getConversationById(id);
   }
 
-  int addNewConversation(ConversationModel conversation) {
-    return objectBoxService.addConversation(conversation);
+  int addNewConversationOrUpdate(ConversationModel conversation) {
+    return objectBoxService.addOrUpdateConversation(conversation);
   }
 
   bool deleteConversationById(int id) {

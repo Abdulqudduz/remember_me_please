@@ -8,7 +8,7 @@ import 'package:remember_me_please/core/models/download_models.dart';
 import 'package:remember_me_please/core/services/download_service.dart';
 import 'package:remember_me_please/core/services/huggingface_auth_service.dart';
 import 'package:remember_me_please/core/services/zip_extraction_service.dart';
-import 'package:remember_me_please/features/llm_model_download/page/constants/constants.dart';
+import 'package:remember_me_please/features/llm_model_download/page/configs/constants.dart';
 
 // Track the state of each specific model
 enum ModelState { notStarted, downloading, extracting, success, failed }

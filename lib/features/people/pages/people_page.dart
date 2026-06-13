@@ -81,12 +81,13 @@ class PeoplePageContent extends StatelessWidget {
                       person.profilePicturePath,
                     ),
                     onEdit: () => _navigateToEditPersonDetail(
-                      context,
-                      person.id,
-                      person.name,
-                      person.relationship,
-                      person.memoryNote1,
-                      person.profilePicturePath,
+                      context: context,
+                      id: person.id,
+                      fromCameraViewPage: false,
+                      name: person.name,
+                      relationship: person.relationship,
+                      description: person.memoryNote1,
+                      profilePicturePath: person.profilePicturePath,
                     ),
                     onDelete: () {
                       _promptDeletePerson(context, person.name, () {
@@ -122,14 +123,15 @@ class PeoplePageContent extends StatelessWidget {
     );
   }
 
-  void _navigateToEditPersonDetail(
-    BuildContext context,
-    int id,
-    String name,
-    String relationship,
-    String description,
+  void _navigateToEditPersonDetail({
+    required BuildContext context,
+    required int id,
+    required bool fromCameraViewPage,
+    required String name,
+    required String relationship,
+    required String description,
     String? profilePicturePath,
-  ) {
+  }) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => AddPersonPage(

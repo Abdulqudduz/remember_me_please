@@ -21,19 +21,19 @@ import 'package:remember_me_please/data/sources/local/objectbox_service.dart';
 void main() {
   setUpAll(() async {
     // Mock SharedPreferences values before test initialization.
-    SharedPreferences.setMockInitialValues({
-      'onboarding_completed': true,
-    });
+    SharedPreferences.setMockInitialValues({'onboarding_completed': true});
 
     // Set objectBox to null to explicitly trigger the fallback stub mode
     // in ObjectBoxService for host/unit tests where libobjectbox is unavailable.
     app.objectBox = null;
   });
 
-  testWidgets('HomePage smoke test with mocked services and providers', (WidgetTester tester) async {
+  testWidgets('HomePage smoke test with mocked services and providers', (
+    WidgetTester tester,
+  ) async {
     final objectBoxService = ObjectBoxService();
     final personRepository = PersonRepository(
-      objectBoxservice: objectBoxService,
+      objectBoxService: objectBoxService,
     );
     final audioService = AudioService();
 

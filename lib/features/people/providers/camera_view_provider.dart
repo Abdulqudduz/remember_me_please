@@ -6,7 +6,7 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:remember_me_please/core/services/active_person_tracker.dart';
 import 'package:remember_me_please/core/services/face_service.dart';
 import 'package:remember_me_please/core/utils/image_utils.dart';
-import 'package:remember_me_please/data/models/person_model.dart';
+import 'package:remember_me_please/core/models/person_model.dart';
 import 'package:remember_me_please/data/repositories/person_repository.dart';
 
 class CameraProvider extends ChangeNotifier {

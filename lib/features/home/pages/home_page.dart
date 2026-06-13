@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:remember_me_please/core/providers/record_provider.dart';
 import 'package:remember_me_please/core/theme/app_theme.dart';
-import 'package:remember_me_please/data/models/reminder_model.dart';
+import 'package:remember_me_please/core/models/reminder_model.dart';
 import 'package:remember_me_please/core/widgets/feature_card.dart';
 import 'package:remember_me_please/core/widgets/recording_modal.dart';
 import 'package:remember_me_please/features/conversations/provider/conversation_provider.dart';

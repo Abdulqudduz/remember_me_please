@@ -1,6 +1,6 @@
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:remember_me_please/features/llm_model_download/page/constants/constants.dart';
+import 'package:remember_me_please/features/llm_model_download/page/configs/constants.dart';
 
 class DownloadService {
   /// Enqueues the download natively and returns the Task ID.

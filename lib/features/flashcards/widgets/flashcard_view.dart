@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:remember_me_please/data/models/flashcard_model.dart';
+import 'package:remember_me_please/core/models/flashcard_model.dart';
 import 'package:remember_me_please/features/flashcards/providers/flashcard_provider.dart';
 import 'package:remember_me_please/features/flashcards/widgets/flashcard_action_button.dart';
 import 'package:remember_me_please/core/theme/app_theme.dart';
@@ -100,12 +100,12 @@ class _FlashcardViewState extends State<FlashcardView>
               Expanded(
                 child: _buildImage(
                   onImageTap: () {
-                    if (widget.card.frontImage != null) {
+                    if (widget.card.frontCardImage != null) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => OpenImagePreview(
-                            imagePreviewedPath: widget.card.frontImage!,
+                            imagePreviewedPath: widget.card.frontCardImage!,
                           ),
                         ),
                       );
@@ -124,12 +124,12 @@ class _FlashcardViewState extends State<FlashcardView>
               else
                 Column(
                   children: [
-                    Text(
-                      widget.card.title,
-                      style: const TextStyle(fontSize: 28),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(subtitle),
+                    // Text(
+                    //   widget.card.title,
+                    //   style: const TextStyle(fontSize: 28),
+                    // ),
+                    // const SizedBox(height: 4),
+                    Text(subtitle, style: const TextStyle(fontSize: 20)),
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -182,7 +182,8 @@ class _FlashcardViewState extends State<FlashcardView>
               ),
               const SizedBox(height: 16),
               Text(
-                widget.card.backText ?? "No additional information available.",
+                widget.card.moreDetails ??
+                    "No additional information available.",
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -251,26 +252,39 @@ class _FlashcardViewState extends State<FlashcardView>
   Widget _buildImage({required final VoidCallback onImageTap}) {
     return GestureDetector(
       onTap: onImageTap,
-      child: Container(
-        decoration: BoxDecoration(
-          image: widget.card.frontImage != null
-              ? DecorationImage(
-                  image: NetworkImage(widget.card.frontImage!),
-                  fit: BoxFit.cover,
+      child: Hero(
+        tag: widget.card.frontCardImage ?? '',
+        child: Container(
+          decoration: BoxDecoration(
+            image: widget.card.frontCardImage != null
+                ? DecorationImage(
+                    image: FileImage(File(widget.card.frontCardImage!)),
+                    fit: BoxFit.cover,
+                  )
+                : null,
+            borderRadius: BorderRadius.circular(24),
+            color: AppColors.surfaceContainer,
+          ),
+          child: widget.card.frontCardImage == null
+              ? const Center(
+                  child: Icon(
+                    Icons.image_not_supported,
+                    size: 50,
+                    color: AppColors.onSurfaceVariant,
+                  ),
                 )
-              : null,
-          borderRadius: BorderRadius.circular(24),
-          color: AppColors.surfaceContainer,
-        ),
-        child: widget.card.frontImage == null
-            ? const Center(
-                child: Icon(
-                  Icons.image_not_supported,
-                  size: 50,
-                  color: AppColors.onSurfaceVariant,
+              : Center(
+                  child: Text(
+                    'Tap to view image',
+                    style: TextStyle(
+                      decoration: TextDecoration.none,
+                      fontStyle: FontStyle.italic,
+                      fontSize: 20,
+                      color: AppColors.onPrimary.withValues(alpha: 0.5),
+                    ),
+                  ),
                 ),
-              )
-            : null,
+        ),
       ),
     );
   }
@@ -305,24 +319,45 @@ class _FlashcardViewState extends State<FlashcardView>
 
 class OpenImagePreview extends StatelessWidget {
   final String imagePreviewedPath;
+
   const OpenImagePreview({super.key, required this.imagePreviewedPath});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.darkSurface,
-
-      body: Column(
-        children: [
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.close),
-            color: AppColors.darkOnSurface,
-          ),
-          Center(child: Image.file(File(imagePreviewedPath))),
-        ],
+      // SafeArea prevents the close button from getting cut off by status bars or notches
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.start, // Aligns close button to the left
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.close),
+                color: AppColors.darkOnSurface,
+              ),
+            ),
+            // Expanded sits directly in the Column to take up all available middle space
+            Expanded(
+              child: Center(
+                child: Hero(
+                  tag: imagePreviewedPath,
+                  child: Image.file(
+                    File(imagePreviewedPath),
+                    fit: BoxFit
+                        .contain, // Ensures the whole image fits on screen without cropping
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }

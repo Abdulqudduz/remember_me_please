@@ -14,10 +14,10 @@ import 'package:objectbox/internal.dart'
 import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
-import 'data/models/conversation_model.dart';
-import 'data/models/flashcard_model.dart';
-import 'data/models/person_model.dart';
-import 'data/models/reminder_model.dart';
+import 'core/models/conversation_model.dart';
+import 'core/models/flashcard_model.dart';
+import 'core/models/person_model.dart';
+import 'core/models/reminder_model.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
@@ -645,12 +645,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final subtitleOffset = object.subtitle == null
             ? null
             : fbb.writeString(object.subtitle!);
-        final frontImageOffset = object.frontImage == null
+        final frontImageOffset = object.frontCardImage == null
             ? null
-            : fbb.writeString(object.frontImage!);
-        final backTextOffset = object.backText == null
+            : fbb.writeString(object.frontCardImage!);
+        final backTextOffset = object.moreDetails == null
             ? null
-            : fbb.writeString(object.backText!);
+            : fbb.writeString(object.moreDetails!);
         fbb.startTable(9);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, questionOffset);
@@ -704,8 +704,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           question: questionParam,
           title: titleParam,
           subtitle: subtitleParam,
-          frontImage: frontImageParam,
-          backText: backTextParam,
+          frontCardImage: frontImageParam,
+          moreDetails: backTextParam,
           categoryIndex: categoryIndexParam,
           createdAt: createdAtParam,
         );
@@ -894,12 +894,12 @@ class FlashcardModel_ {
     _entities[3].properties[3],
   );
 
-  /// See [FlashcardModel.frontImage].
+  /// See [FlashcardModel.frontCardImage].
   static final frontImage = obx.QueryStringProperty<FlashcardModel>(
     _entities[3].properties[4],
   );
 
-  /// See [FlashcardModel.backText].
+  /// See [FlashcardModel.moreDetails].
   static final backText = obx.QueryStringProperty<FlashcardModel>(
     _entities[3].properties[5],
   );

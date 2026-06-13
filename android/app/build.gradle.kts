@@ -45,6 +45,14 @@ android {
     }
 }
 
+// Force Gradle to remove the default non-browser package during debug builds
+configurations {
+    named("debugImplementation") {
+        exclude(group = "io.objectbox", module = "objectbox-android")
+    }
+}
+
+
 dependencies {
     // Play Core (fixes missing splitinstall errors)
     implementation("com.google.android.play:core:1.10.3")
@@ -52,6 +60,9 @@ dependencies {
 
     // MediaPipe (fixes proto missing classes if used by plugins)
     // implementation("com.google.mediapipe:solution-core:0.10.0")
+
+// ObjectBox for admin web interface (optional, only in debug builds)
+    debugImplementation("io.objectbox:objectbox-android-objectbrowser:5.4.1")
 }
 
 flutter {
