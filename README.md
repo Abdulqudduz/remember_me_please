@@ -65,8 +65,8 @@ Native mobile OS voices are robotic and can cause anxiety for users with cogniti
 ### Installation
 1. **Clone the repo:**
    ```bash
-   git clone [https://github.com/YOUR_USERNAME/remember-me-please.git](https://github.com/YOUR_USERNAME/remember-me-please.git)
-   cd remember-me-please
+   git clone https://github.com/Abdulqudduz/remember_me_please.git
+   cd remember_me_please
 
 ```
 
